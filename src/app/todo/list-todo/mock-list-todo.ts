@@ -1,4 +1,6 @@
-import { TodoModel } from "../Todo";
+import { type TodoModel } from "../Todo";
 
-
-export const TODOS : TodoModel[] = [{id:1, state:1, value:"toto"}, {id:2, state:1, value:"tata"}]
+export const TODOS: TodoModel[] = [
+  { id: 1, state: 1, value: "toto" },
+  { id: 2, state: 1, value: "tata" },
+];

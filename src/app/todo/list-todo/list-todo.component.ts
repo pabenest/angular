@@ -1,26 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { TODOS } from './mock-list-todo';
-import { Router } from '@angular/router';
-import { TodoModel } from '../Todo';
+import { Component, type OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+
+import { type TodoModel } from "../Todo";
+import { TODOS } from "./mock-list-todo";
 
 @Component({
-  selector: 'app-list-todo',
-  templateUrl: './list-todo.component.html',
-  styleUrls: ['./list-todo.component.css']
+  selector: "app-list-todo",
+  templateUrl: "./list-todo.component.html",
+  styleUrls: ["./list-todo.component.css"],
 })
 export class ListTodoComponent implements OnInit {
-
-  todoList : TodoModel[] = TODOS
+  todoList: TodoModel[] = TODOS;
   todoModelList: TodoModel[] = [];
 
-constructor(private router : Router) {}
+  constructor(private router: Router) {}
 
-
-goToTodoDetail(todoModel : TodoModel) {
-this.router.navigate(["/todo", todoModel.id])
-}
+  async goToTodoDetail(todoModel: TodoModel) {
+    await this.router.navigate(["/todo", todoModel.id]);
+  }
 
   ngOnInit(): void {
-    this.todoModelList = TODOS
+    this.todoModelList = TODOS;
   }
 }

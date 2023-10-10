@@ -1,21 +1,21 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DetailTodoComponent } from './detail-todo.component';
+import { DetailTodoComponent } from "./detail-todo.component";
 
-describe('DetailTodoComponent', () => {
+describe("DetailTodoComponent", () => {
   let component: DetailTodoComponent;
   let fixture: ComponentFixture<DetailTodoComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [DetailTodoComponent]
+      declarations: [DetailTodoComponent],
     });
     fixture = TestBed.createComponent(DetailTodoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
