@@ -1,6 +1,26 @@
+<<<<<<< HEAD
 <h1 class="center">Gestion des TODOS</h1>
 
 <router-outlet></router-outlet>
 
 
 
+=======
+<section class="todoapp">
+  <header class="header">
+    <h1>todos {{title}}</h1>
+    <input class="new-todo" placeholder="What needs to be done?" autofocus="" (keyup.enter)="title = $event.type">
+  </header>
+  <section class="main">
+    <input id="toggle-all" class="toggle-all" type="checkbox" #toggleall>
+    <ul class="todo-list">
+      <app-todo></app-todo>
+    </ul>
+  </section>
+  <footer class="footer">
+    <span class="todo-count"><strong>11232</strong> pas beaucoup left</span>
+    <button class="clear-completed">Clear
+      completed</button>
+  </footer>
+</section>
+>>>>>>> 6c8774c22cb7effc638bb88bd1c1fd441862848b
