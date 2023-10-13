@@ -1,27 +1,40 @@
 <div>
+  <input type="hidden" #currentEditedTodo />
   <ul>
-   <li><input  id="inputNewTodo" type="text" [(ngModel)]="newValue" (keyup.enter)="addTodo()"
-    placeholder="What needs to be done?"/></li>
+   <li>
+    <input
+      [(ngModel)]="newValue"
+      (keyup.enter)="addTodo()"
+      id="inputNewTodo"
+      type="text"
+      placeholder="What needs to be done?"
+    />
+  </li>
   <li *ngFor="let todo of todoList">
     <div>
-      <input type="checkbox" #inputCheckbox (change)="checkState(todo, inputCheckbox)"
-          [(ngModel)]="todo.checked">
-      <div *ngIf="todo.edit">
-          <input id="inputTodo" type="text" [(ngModel)]="todo.value" (keyup.enter)="updateValueTodo(todo)"
-          (keyup.escape)="cancelEditTodo(todo)"/>
-          <select id="selectState" [(ngModel)]="todo.state" #selectState (change)="comboState(todo, selectState)">
-            <option *ngFor="let stateTodo of stateTodoList" [value]="stateTodo.id"> {{stateTodo.value}}</option>
+      <input type="hidden" [value]="todo.id" />
+      <input type="checkbox" #inputCheckbox (change)="inputCheckbox.checked ? todo.state = 3 : todo.state = 1"
+          [checked]="todo.state === 3">
+      <div *ngIf="todo.id === +currentEditedTodo.value; then edit else noEdit"></div>
+
+      <ng-template #edit>
+          <input id="inputTodo" type="text" [(ngModel)]="todo.value" (keyup.enter)="currentEditedTodo.value = ''"
+          (keyup.escape)="currentEditedTodo.value = ''"/>
+          <select id="selectState" [(ngModel)]="todo.state" #selectState>
+            <option *ngFor="let stateTodo of stateTodoList" [ngValue]="stateTodo.id"> {{stateTodo.value}}</option>
           </select>
-        <button (click)="removeTodo(todo)" type="submit" >Remove</button>
-      </div>
-      <div *ngIf="!todo.edit">
-          <label *ngIf="!todo.edit" (dblclick)="goToEditTodo(todo)">{{getLabelTodo(todo.value,todo.state)}}</label>
-          <button (click)="goToTodoDetail(todo)" type="submit" > Détail</button>
-      </div>
+        <button (click)="removeTodo(todo)">Remove</button>
+      </ng-template>
+      <ng-template #noEdit>
+          <span (dblclick)="currentEditedTodo.value = (todo.id + '')">{{todo.value}} {{getStateTodo(todo.state)?.value}}</span>
+          <button (click)="router.navigate(['/todo', todo.id])" >Détail</button>
+      </ng-template>
     </div>
   </li>
 </ul>
  </div>
-<div *ngIf="getNotCompleted().length !== todoList.length"><button (click)="clearCompleted()" type="submit" >clear Completed</button></div>
-<div><label>{{getTodoLeft()}}</label></div>
+<div *ngIf="getNotCompleted().length !== todoList.length">
+  <button (click)="todoList = getNotCompleted()">clear Completed</button>
+</div>
+<div><label>{{getTodoLeftLabel()}}</label></div>
 
