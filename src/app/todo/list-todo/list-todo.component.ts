@@ -2,7 +2,7 @@ import { Component, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { type StateTodoModel, type TodoModel } from "../Todo";
-import { STATES, TODOS } from "./mock-list-todo";
+import { TodoService } from "../todo.service";
 
 @Component({
   selector: "app-list-todo",
@@ -15,11 +15,14 @@ export class ListTodoComponent implements OnInit {
   stateTodoList: StateTodoModel[] = [];
   console = console;
 
-  constructor(public router: Router) {}
+  constructor(
+    public router: Router,
+    private todoService: TodoService,
+  ) {}
 
   ngOnInit(): void {
-    this.todoList = TODOS;
-    this.stateTodoList = STATES;
+    this.todoService.getTodoList().subscribe(todoList => (this.todoList = todoList));
+    this.todoService.getStateTodoList().subscribe(stateTodoList => (this.stateTodoList = stateTodoList));
   }
 
   addTodo() {

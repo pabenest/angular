@@ -42,3 +42,10 @@ Your app should dynamically persist the todos to localStorage. If the framework 
 ### Routing
 
 Routing is required for all implementations. If supported by the framework, use its built-in capabilities. Otherwise, use the  [Flatiron Director](https://github.com/flatiron/director) routing library located in the `/assets` folder. The following routes should be implemented: `#/` (all - default), `#/active` and `#/completed` (`#!/` is also allowed). When the route changes, the todo list should be filtered on a model level and the `selected` class on the filter links should be toggled. When an item is updated while in a filtered state, it should be updated accordingly. E.g. if the filter is `Active` and the item is checked, it should be hidden. Make sure the active filter is persisted on reload.
+
+
+### 13/10 tasks
+- [ ] handle "Toggle all" button
+- [ ] in "StateTodoModel", add "isEnd" and "isStart" properties 
+- [ ] handle filter button (with routing) according to the state of the todos. Either "all, active or completed (isEnd)", or all states.
+- [ ] plug to the backend

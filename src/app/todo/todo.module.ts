@@ -5,6 +5,7 @@ import { RouterModule, type Routes } from "@angular/router";
 
 import { DetailTodoComponent } from "./detail-todo/detail-todo.component";
 import { ListTodoComponent } from "./list-todo/list-todo.component";
+import { TodoService } from "./todo.service";
 
 const todoRoutes: Routes = [
   { path: "todos", component: ListTodoComponent },
@@ -14,5 +15,6 @@ const todoRoutes: Routes = [
 @NgModule({
   declarations: [ListTodoComponent, DetailTodoComponent],
   imports: [CommonModule, FormsModule, RouterModule.forChild(todoRoutes)],
+  providers: [TodoService],
 })
 export class TodoModule {}

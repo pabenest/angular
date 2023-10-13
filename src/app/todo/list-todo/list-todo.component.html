@@ -1,45 +1,116 @@
-<div>
-  <input type="hidden" #currentEditedTodo />
-  <ul>
-   <li>
-    <input
-      [(ngModel)]="newValue"
-      (keyup.enter)="addTodo()"
-      id="inputNewTodo"
-      type="text"
-      placeholder="What needs to be done?"
-    />
-  </li>
-  <li *ngFor="let todo of todoList">
-    <div>
+<input type="hidden" #currentEditedTodo />
+<header>
+  <h1>todo</h1>
+  <input
+    class="new-todo"
+    [(ngModel)]="newValue"
+    (keyup.enter)="addTodo()"
+    placeholder="What needs to be done?"
+    autofocus
+  />
+</header>
+
+<section class="main">
+  <input id="toggle-all" class="toggle-all" type="checkbox" />
+  <label for="toggle-all">Mark all as complete</label>
+  <ul class="todo-list">
+    <li
+      *ngFor="let todo of todoList"
+      [ngClass]="{
+        completed: todo.state === 3,
+        editing: currentEditedTodo.value === todo.id + ''
+      }"
+    >
       <input type="hidden" [value]="todo.id" />
-      <input type="checkbox" #inputCheckbox (change)="inputCheckbox.checked ? todo.state = 3 : todo.state = 1"
-          [checked]="todo.state === 3">
-      <div *ngIf="todo.id === +currentEditedTodo.value; then edit else noEdit"></div>
-
-      <ng-template #edit>
-        <div (focusout)="(
-          ($event.target === inputTodo && $event.relatedTarget === selectState || $event.relatedTarget === removeButton)
-          || ($event.target === selectState && $event.relatedTarget === inputTodo || $event.relatedTarget === removeButton))
-          || currentEditedTodo.value = ''" style="display: inline-block;">
-          <input #inputTodo id="inputTodo" type="text" [(ngModel)]="todo.value" (keyup.enter)="currentEditedTodo.value = ''"
-          (keyup.escape)="currentEditedTodo.value = ''"/>
-          <select id="selectState" [(ngModel)]="todo.state" #selectState>
-            <option *ngFor="let stateTodo of stateTodoList" [ngValue]="stateTodo.id"> {{stateTodo.value}}</option>
-          </select>
-        </div>
-        <button #removeButton (click)="removeTodo(todo)">Remove</button>
-      </ng-template>
-      <ng-template #noEdit (click)="console.log('coucou', $event)">
-          <span (dblclick)="currentEditedTodo.value = (todo.id + '')">{{todo.value}} {{getStateTodo(todo.state)?.value}}</span>
-          <button (click)="router.navigate(['/todo', todo.id])" >Détail</button>
-      </ng-template>
-    </div>
-  </li>
-</ul>
- </div>
-<div *ngIf="getNotCompleted().length !== todoList.length">
-  <button (click)="todoList = getNotCompleted()">clear Completed</button>
-</div>
-<div><label>{{getTodoLeftLabel()}}</label></div>
-
+      <div class="view">
+        <input
+          class="toggle"
+          type="checkbox"
+          #inputCheckbox
+          (change)="inputCheckbox.checked ? (todo.state = 3) : (todo.state = 1)"
+          [checked]="todo.state === 3"
+          [indeterminate]="todo.state === 2"
+        />
+        <label (dblclick)="currentEditedTodo.value = todo.id + ''">
+          {{ todo.value }} {{ getStateTodo(todo.state)?.value }}
+        </label>
+        <button
+          class="detail"
+          title="Detail"
+          (click)="router.navigate(['/todo', todo.id])"
+        ></button>
+        <button
+          class="destroy"
+          title="Destroy"
+          (click)="removeTodo(todo)"
+        ></button>
+      </div>
+      <div
+        *ngIf="currentEditedTodo.value === todo.id + ''"
+        (focusout)="
+          ($event.target === inputTodo &&
+            $event.relatedTarget === selectState) ||
+            ($event.target === selectState &&
+              $event.relatedTarget === inputTodo) ||
+            (currentEditedTodo.value = '')
+        "
+        class="input-container"
+      >
+        <input
+          #inputTodo
+          class="edit"
+          autofocus
+          [(ngModel)]="todo.value"
+          (keyup.enter)="currentEditedTodo.value = ''"
+          (keyup.escape)="currentEditedTodo.value = ''"
+        />
+        <select id="selectState" [(ngModel)]="todo.state" #selectState>
+          <option
+            *ngFor="let stateTodo of stateTodoList"
+            [ngValue]="stateTodo.id"
+          >
+            {{ stateTodo.value }}
+          </option>
+        </select>
+      </div>
+    </li>
+  </ul>
+</section>
+<footer class="footer" *ngIf="todoList.length">
+  <span class="todo-count">
+    <strong>{{ getNotCompleted().length }}</strong>
+    <span [ngPlural]="getNotCompleted().length">
+      <ng-template ngPluralCase="one">item left</ng-template>
+      <ng-template ngPluralCase="other">items left</ng-template>
+    </span>
+  </span>
+  <ul class="filters">
+    <li>
+      <a
+        ng-class="{ selected: location.path() == '/' }"
+        href="#/"
+        class="selected"
+        >All</a
+      >
+    </li>
+    <li>
+      <a ng-class="{ selected: location.path() == '/active' }" href="#/active"
+        >Active</a
+      >
+    </li>
+    <li>
+      <a
+        ng-class="{ selected: location.path() == '/completed' }"
+        href="#/completed"
+        >Completed</a
+      >
+    </li>
+  </ul>
+  <button
+    class="clear-completed"
+    (click)="todoList = getNotCompleted()"
+    *ngIf="getNotCompleted().length !== todoList.length"
+  >
+    Clear completed
+  </button>
+</footer>
