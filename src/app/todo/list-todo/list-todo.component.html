@@ -1,9 +1,27 @@
-<div class="row">
-  <div *ngFor="let todo of todoList" class="col m4 s6">
-    <div (click)="goToTodoDetail(todo)">
-       <p>
-          {{todo.value}}
-       </p>
+<div>
+  <ul>
+   <li><input  id="inputNewTodo" type="text" [(ngModel)]="newValue" (keyup.enter)="addTodo()"
+    placeholder="What needs to be done?"/></li>
+  <li *ngFor="let todo of todoList">
+    <div>
+      <input type="checkbox" #inputCheckbox (change)="checkState(todo, inputCheckbox)"
+          [(ngModel)]="todo.checked">
+      <div *ngIf="todo.edit">
+          <input id="inputTodo" type="text" [(ngModel)]="todo.value" (keyup.enter)="updateValueTodo(todo)"
+          (keyup.escape)="cancelEditTodo(todo)"/>
+          <select id="selectState" [(ngModel)]="todo.state" #selectState (change)="comboState(todo, selectState)">
+            <option *ngFor="let stateTodo of stateTodoList" [value]="stateTodo.id"> {{stateTodo.value}}</option>
+          </select>
+        <button (click)="removeTodo(todo)" type="submit" >Remove</button>
+      </div>
+      <div *ngIf="!todo.edit">
+          <label *ngIf="!todo.edit" (dblclick)="goToEditTodo(todo)">{{getLabelTodo(todo.value,todo.state)}}</label>
+          <button (click)="goToTodoDetail(todo)" type="submit" > Détail</button>
+      </div>
     </div>
-  </div>
+  </li>
+</ul>
  </div>
+<div *ngIf="getNotCompleted().length !== todoList.length"><button (click)="clearCompleted()" type="submit" >clear Completed</button></div>
+<div><label>{{getTodoLeft()}}</label></div>
+

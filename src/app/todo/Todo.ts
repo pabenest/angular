@@ -8,3 +8,12 @@ export interface StateTodoModel extends WithId {
   isDefault: boolean;
   value: string;
 }
+
+export interface TodoView extends TodoModel {
+  checked: boolean;
+  edit: boolean;
+}
+
+export interface StateTodoView extends StateTodoModel {
+  edit: boolean;
+}
