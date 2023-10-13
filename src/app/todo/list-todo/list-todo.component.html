@@ -18,14 +18,19 @@
       <div *ngIf="todo.id === +currentEditedTodo.value; then edit else noEdit"></div>
 
       <ng-template #edit>
-          <input id="inputTodo" type="text" [(ngModel)]="todo.value" (keyup.enter)="currentEditedTodo.value = ''"
+        <div (focusout)="(
+          ($event.target === inputTodo && $event.relatedTarget === selectState || $event.relatedTarget === removeButton)
+          || ($event.target === selectState && $event.relatedTarget === inputTodo || $event.relatedTarget === removeButton))
+          || currentEditedTodo.value = ''" style="display: inline-block;">
+          <input #inputTodo id="inputTodo" type="text" [(ngModel)]="todo.value" (keyup.enter)="currentEditedTodo.value = ''"
           (keyup.escape)="currentEditedTodo.value = ''"/>
           <select id="selectState" [(ngModel)]="todo.state" #selectState>
             <option *ngFor="let stateTodo of stateTodoList" [ngValue]="stateTodo.id"> {{stateTodo.value}}</option>
           </select>
-        <button (click)="removeTodo(todo)">Remove</button>
+        </div>
+        <button #removeButton (click)="removeTodo(todo)">Remove</button>
       </ng-template>
-      <ng-template #noEdit>
+      <ng-template #noEdit (click)="console.log('coucou', $event)">
           <span (dblclick)="currentEditedTodo.value = (todo.id + '')">{{todo.value}} {{getStateTodo(todo.state)?.value}}</span>
           <button (click)="router.navigate(['/todo', todo.id])" >Détail</button>
       </ng-template>

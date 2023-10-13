@@ -13,6 +13,7 @@ export class ListTodoComponent implements OnInit {
   newValue = "";
   todoList: TodoModel[] = [];
   stateTodoList: StateTodoModel[] = [];
+  console = console;
 
   constructor(public router: Router) {}
 
