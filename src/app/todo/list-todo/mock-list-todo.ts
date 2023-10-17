@@ -7,7 +7,8 @@ export const TODOS: TodoModel[] = [
 ];
 
 export const STATES: StateTodoModel[] = [
-  { id: 1, isDefault: true, value: "A faire" },
-  { id: 2, isDefault: false, value: "En cours" },
-  { id: 3, isDefault: false, value: "Terminé" },
+  { id: 1, isDefault: true, isEnd: false, isStart: true, value: "À faire" },
+  { id: 87884, isDefault: false, isEnd: false, isStart: false, value: "À supprimer" },
+  { id: 2, isDefault: false, isEnd: false, isStart: false, value: "En cours" },
+  { id: 3, isDefault: false, isEnd: true, isStart: false, value: "Terminé" },
 ];

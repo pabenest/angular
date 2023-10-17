@@ -1,4 +1,3 @@
-<input type="hidden" #currentEditedTodo />
 <header>
   <h1>todo</h1>
   <input
@@ -13,68 +12,82 @@
 <section class="main">
   <input id="toggle-all" class="toggle-all" type="checkbox" />
   <label for="toggle-all">Mark all as complete</label>
-  <ul class="todo-list">
-    <li
-      *ngFor="let todo of todoList"
-      [ngClass]="{
-        completed: todo.state === 3,
-        editing: currentEditedTodo.value === todo.id + ''
-      }"
-    >
-      <input type="hidden" [value]="todo.id" />
-      <div class="view">
-        <input
-          class="toggle"
-          type="checkbox"
-          #inputCheckbox
-          (change)="inputCheckbox.checked ? (todo.state = 3) : (todo.state = 1)"
-          [checked]="todo.state === 3"
-          [indeterminate]="todo.state === 2"
-        />
-        <label (dblclick)="currentEditedTodo.value = todo.id + ''">
-          {{ todo.value }} {{ getStateTodo(todo.state)?.value }}
-        </label>
-        <button
-          class="detail"
-          title="Detail"
-          (click)="router.navigate(['/todo', todo.id])"
-        ></button>
-        <button
-          class="destroy"
-          title="Destroy"
-          (click)="removeTodo(todo)"
-        ></button>
-      </div>
-      <div
-        *ngIf="currentEditedTodo.value === todo.id + ''"
-        (focusout)="
-          ($event.target === inputTodo &&
-            $event.relatedTarget === selectState) ||
-            ($event.target === selectState &&
-              $event.relatedTarget === inputTodo) ||
-            (currentEditedTodo.value = '')
-        "
-        class="input-container"
+  <div *ngIf="loading; else loaded">
+    <div class="loader" style="font-size: 2em; padding: 1em; font-weight: 600">
+      Chargement...
+    </div>
+  </div>
+  <ng-template #loaded>
+    <ul class="todo-list">
+      <li
+        *ngFor="let todo of filteredTodoList"
+        [ngClass]="{
+          completed: getStateTodo(todo.state).isEnd,
+          editing: currentEditedTodo?.id === todo.id
+        }"
       >
-        <input
-          #inputTodo
-          class="edit"
-          autofocus
-          [(ngModel)]="todo.value"
-          (keyup.enter)="currentEditedTodo.value = ''"
-          (keyup.escape)="currentEditedTodo.value = ''"
-        />
-        <select id="selectState" [(ngModel)]="todo.state" #selectState>
-          <option
-            *ngFor="let stateTodo of stateTodoList"
-            [ngValue]="stateTodo.id"
+        <input type="hidden" [value]="todo.id" />
+        <div class="view">
+          <input
+            class="toggle"
+            type="checkbox"
+            #inputCheckbox
+            (change)="
+              inputCheckbox.checked
+                ? (todo.state = getEndStateTodo().id)
+                : (todo.state = getStartStateTodo().id)
+            "
+            [checked]="getStateTodo(todo.state).isEnd"
+            [indeterminate]="
+              !getStateTodo(todo.state).isEnd &&
+              !getStateTodo(todo.state).isStart
+            "
+          />
+          <label (dblclick)="currentEditedTodo = todo; focusEditInput()">
+            {{ todo.value }} {{ getStateTodo(todo.state).value }}
+          </label>
+          <button
+            class="detail"
+            title="Detail"
+            (click)="router.navigate(['/todo', todo.id])"
+          ></button>
+          <button
+            class="destroy"
+            title="Destroy"
+            (click)="removeTodo(todo)"
+          ></button>
+        </div>
+        <div
+          *ngIf="currentEditedTodo?.id === todo.id"
+          (focusout)="onFocusOut($event)"
+          class="input-container"
+        >
+          <input
+            #inputTodo
+            class="edit"
+            autofocus
+            *ngIf="currentEditedTodo"
+            [(ngModel)]="currentEditedTodo.value"
+            (keyup.enter)="inputTodo.blur()"
+            (keyup.escape)="currentEditedTodo = null"
+          />
+          <select
+            id="selectState"
+            *ngIf="currentEditedTodo"
+            [(ngModel)]="currentEditedTodo.state"
+            #selectState
           >
-            {{ stateTodo.value }}
-          </option>
-        </select>
-      </div>
-    </li>
-  </ul>
+            <option
+              *ngFor="let stateTodo of stateTodoList"
+              [ngValue]="stateTodo.id"
+            >
+              {{ stateTodo.value }}
+            </option>
+          </select>
+        </div>
+      </li>
+    </ul>
+  </ng-template>
 </section>
 <footer class="footer" *ngIf="todoList.length">
   <span class="todo-count">
@@ -87,20 +100,34 @@
   <ul class="filters">
     <li>
       <a
-        ng-class="{ selected: location.path() == '/' }"
+        [ngClass]="{
+          selected:
+            (this.route.fragment | async) === '/' ||
+            (this.route.fragment | async) === null
+        }"
         href="#/"
-        class="selected"
         >All</a
       >
     </li>
     <li>
-      <a ng-class="{ selected: location.path() == '/active' }" href="#/active"
+      <a
+        [ngClass]="{ selected: (this.route.fragment | async) === '/active' }"
+        href="#/active"
         >Active</a
       >
     </li>
     <li>
       <a
-        ng-class="{ selected: location.path() == '/completed' }"
+        [ngClass]="{
+          selected: (this.route.fragment | async) === '/indeterminate'
+        }"
+        href="#/indeterminate"
+        >Indéterminé</a
+      >
+    </li>
+    <li>
+      <a
+        [ngClass]="{ selected: (this.route.fragment | async) === '/completed' }"
         href="#/completed"
         >Completed</a
       >
