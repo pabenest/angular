@@ -10,33 +10,43 @@ const defaultHttpOptions = {
 
 @Injectable()
 export class TodoService {
-  constructor(private http: HttpClient) {}
+  baseUrl = "http://localhost:3000/";
+
+  private urlTodo: string;
+  private urlStateTodo: string;
+
+  constructor(private http: HttpClient) {
+    this.urlTodo = this.baseUrl + "todo/";
+    this.urlStateTodo = this.baseUrl + "state-todo/";
+  }
 
   getTodoList(): Promise<TodoModel[]> {
     return firstValueFrom(
-      this.http.get<TodoModel[]>("api/todo").pipe(tap(value => console.log("getTodoList()", value))),
+      this.http.get<TodoModel[]>(this.urlTodo).pipe(tap(value => console.log("getTodoList()", value))),
     );
   }
 
   async addTodo(todo: TodoModel): Promise<void> {
     await firstValueFrom(
-      this.http.post("api/todo", todo, defaultHttpOptions).pipe(tap(value => console.log("addTodo()", value))),
+      this.http.post(this.urlTodo, todo, defaultHttpOptions).pipe(tap(value => console.log("addTodo()", value))),
     );
   }
 
   async updateTodo(todo: TodoModel): Promise<void> {
     await firstValueFrom(
-      this.http.put("api/todo", todo, defaultHttpOptions).pipe(tap(value => console.log("updateTodo()", value))),
+      this.http.put(this.urlTodo, todo, defaultHttpOptions).pipe(tap(value => console.log("updateTodo()", value))),
     );
   }
 
   async deleteTodoById(id: number): Promise<void> {
-    await firstValueFrom(this.http.delete(`api/todo/${id}`).pipe(tap(value => console.log("deleteTodoById()", value))));
+    await firstValueFrom(
+      this.http.delete(`${this.urlTodo}${id}`).pipe(tap(value => console.log("deleteTodoById()", value))),
+    );
   }
 
   getStateTodoList(): Promise<StateTodoModel[]> {
     return firstValueFrom(
-      this.http.get<StateTodoModel[]>("api/state-todo").pipe(tap(value => console.log("getStateTodoList()", value))),
+      this.http.get<StateTodoModel[]>(this.urlStateTodo).pipe(tap(value => console.log("getStateTodoList()", value))),
     );
   }
 
