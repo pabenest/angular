@@ -10,43 +10,48 @@ const defaultHttpOptions = {
 
 @Injectable()
 export class TodoService {
-  baseUrl = "http://localhost:3000/";
+  baseUrl = "http://localhost:3000";
 
-  private urlTodo: string;
-  private urlStateTodo: string;
+  private urlTodo = new URL("todo/", this.baseUrl);
+  private urlStateTodo = new URL("state-todo/", this.baseUrl);
 
-  constructor(private http: HttpClient) {
-    this.urlTodo = this.baseUrl + "todo/";
-    this.urlStateTodo = this.baseUrl + "state-todo/";
-  }
+  constructor(private http: HttpClient) {}
 
   getTodoList(): Promise<TodoModel[]> {
     return firstValueFrom(
-      this.http.get<TodoModel[]>(this.urlTodo).pipe(tap(value => console.log("getTodoList()", value))),
+      this.http.get<TodoModel[]>(this.urlTodo.toString()).pipe(tap(value => console.log("getTodoList()", value))),
     );
   }
 
   async addTodo(todo: TodoModel): Promise<void> {
     await firstValueFrom(
-      this.http.post(this.urlTodo, todo, defaultHttpOptions).pipe(tap(value => console.log("addTodo()", value))),
+      this.http
+        .post(this.urlTodo.toString(), todo, defaultHttpOptions)
+        .pipe(tap(value => console.log("addTodo()", value))),
     );
   }
 
   async updateTodo(todo: TodoModel): Promise<void> {
     await firstValueFrom(
-      this.http.put(this.urlTodo, todo, defaultHttpOptions).pipe(tap(value => console.log("updateTodo()", value))),
+      this.http
+        .put(new URL(`${todo.id}`, this.urlTodo).toString(), todo, defaultHttpOptions)
+        .pipe(tap(value => console.log("updateTodo()", value))),
     );
   }
 
   async deleteTodoById(id: number): Promise<void> {
     await firstValueFrom(
-      this.http.delete(`${this.urlTodo}${id}`).pipe(tap(value => console.log("deleteTodoById()", value))),
+      this.http
+        .delete(new URL(`${id}`, this.urlTodo).toString())
+        .pipe(tap(value => console.log("deleteTodoById()", value))),
     );
   }
 
   getStateTodoList(): Promise<StateTodoModel[]> {
     return firstValueFrom(
-      this.http.get<StateTodoModel[]>(this.urlStateTodo).pipe(tap(value => console.log("getStateTodoList()", value))),
+      this.http
+        .get<StateTodoModel[]>(this.urlStateTodo.toString())
+        .pipe(tap(value => console.log("getStateTodoList()", value))),
     );
   }
 
