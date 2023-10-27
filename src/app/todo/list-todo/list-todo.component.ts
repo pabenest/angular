@@ -76,11 +76,30 @@ export class ListTodoComponent implements OnInit {
       case "/completed":
         this.filteredTodoList = this.todoList.filter(x => this.getStateTodo(x.state).isEnd);
         break;
+      case "/indeterminate":
+        this.filteredTodoList = this.todoList.filter(
+          x => !this.getStateTodo(x.state).isEnd && !this.getStateTodo(x.state).isStart,
+        );
+        break;
       default:
         console.log("no fragment", this.todoList);
-        this.filteredTodoList = [...this.todoList];
+        this.filteredTodoList = this.todoList;
         break;
     }
+  }
+
+  public async changeTodoState(todo: TodoModel, stateId: number) {
+    todo.state = stateId;
+    await this.todoService.updateTodo(todo);
+    await this.loadTodoList(this.route.snapshot.fragment);
+  }
+
+  public getSourceTodo(id: number) {
+    const todo = this.todoList.find(x => x.id === id);
+    if (!todo) {
+      throw new Error(`Todo with given id "${id}" not found`);
+    }
+    return todo;
   }
 
   async addTodo() {

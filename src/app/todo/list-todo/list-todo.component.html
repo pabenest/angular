@@ -33,9 +33,12 @@
             type="checkbox"
             #inputCheckbox
             (change)="
-              inputCheckbox.checked
-                ? (todo.state = getEndStateTodo().id)
-                : (todo.state = getStartStateTodo().id)
+              changeTodoState(
+                todo,
+                inputCheckbox.checked
+                  ? getEndStateTodo().id
+                  : getStartStateTodo().id
+              )
             "
             [checked]="getStateTodo(todo.state).isEnd"
             [indeterminate]="
@@ -72,7 +75,7 @@
             (keyup.escape)="currentEditedTodo = null"
           />
           <select
-            id="selectState"
+            class="edit"
             *ngIf="currentEditedTodo"
             [(ngModel)]="currentEditedTodo.state"
             #selectState
